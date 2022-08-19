@@ -65,6 +65,21 @@ restore() {
 	fi
 }
 
+findByUsername() {
+	read -p "Username: " username
+	local username=$(echo $username | tr '[:upper:]' '[:lower:]')
+	local isFound=0
+	while IFS= read -r line; do
+		# Get first work from line without coma
+ 		local dbUsername=$(echo $line | tr ", " "\n" | head -1 | tr '[:upper:]' '[:lower:]')
+		if [ $username == $dbUsername ]; then
+			echo "$line"
+			isFound=1
+		fi	
+	done < $DB
+	[ $isFound -eq 0 ] && echo "User not found"
+}
+
 for arg in $@;
 do
 	case $arg in
@@ -77,6 +92,9 @@ do
 		restore)
 			checkDBFileExist && exit 1
 			restore;;
+		find)
+			checkDBFileExist && exit 1
+			findByUsername;;
 		help) echo "Help";;
 	esac
 done
