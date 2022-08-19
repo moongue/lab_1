@@ -22,6 +22,9 @@ checkDBFileExist() {
 			echo "Programm can't execute without users.db"
    			return 0
 		fi
+		if [[ ! -d $DATA_FOlDER ]]; then
+			mkdir $DATA_FOLDER
+		fi
 		touch $DB
 	fi
 	chmod ugo=rwx $DB
