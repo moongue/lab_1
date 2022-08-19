@@ -104,6 +104,10 @@ list() {
 			counter=$((counter+1))
 		fi
 	done <<< $($runCommand $DB)
+}
+
+logHelp() {
+	echo $'add - add a new username role pair to the users.db \n backup - creates a new file, named %date%-users.db.backup which is a copy of current users.db \n restore - takes the last created backup file and replaces users.db with it. \n find - prompts the user to type a username then prints username and role if such exists in users.db. \n list - prints the content of the users.db in the format: N. username, role. option: --inverse which allows results in the opposite order – from bottom to top.'
 }	
 
 for arg in $@;
@@ -124,7 +128,10 @@ do
 		list)
 			checkDBFileExist && exit 1
 			list $2;;
-		help) echo "Help";;
+		help) logHelp;;
+		*) logHelp;;
 	esac
 done
+
+if [ $# -eq 0 ]; then logHelp; fi
 
