@@ -50,7 +50,19 @@ add() {
 }
 
 backup() {
+	# Copy DB file content into new backup file
 	cat $DB > "$DATA_FOLDER/$(date +"%x_%X")-users.db.backup"
+}
+
+restore() {
+	# Takes last backup file and replace users.db file
+	local lastBackup=$(ls -t ../data/ | grep .\*\.backup | head -1)
+	
+	if [ $lastBackup ]; then
+		cat "$DATA_FOLDER/$lastBackup" > $DB
+	else
+		echo "No backup file found"
+	fi
 }
 
 for arg in $@;
@@ -62,6 +74,9 @@ do
 		backup)
 			checkDBFileExist && exit 1
 			backup;;
+		restore)
+			checkDBFileExist && exit 1
+			restore;;
 		help) echo "Help";;
 	esac
 done
