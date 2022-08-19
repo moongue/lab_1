@@ -80,6 +80,29 @@ findByUsername() {
 	[ $isFound -eq 0 ] && echo "User not found"
 }
 
+list() {
+	local isReverse=$([ "$1" == "--inverse" ]; echo $?)
+	local counter=1;
+	local lines=$(cat $DB)
+	local runCommand=cat
+	local operator=-	
+
+	if [ $isReverse -eq 0 ]; then
+		runCommand=tac
+		counter=$(cat $DB | wc -l)
+	fi
+	
+	while IFS= read -r line; do
+		echo "$counter. $line"
+		
+		if [ $isReverse -eq 0 ]; then
+			counter=$((counter-1))
+		else
+			counter=$((counter+1))
+		fi
+	done <<< $($runCommand $DB)
+}	
+
 for arg in $@;
 do
 	case $arg in
@@ -95,6 +118,9 @@ do
 		find)
 			checkDBFileExist && exit 1
 			findByUsername;;
+		list)
+			checkDBFileExist && exit 1
+			list $2;;
 		help) echo "Help";;
 	esac
 done
